@@ -21,6 +21,9 @@ CLASS lhc_ZCE_SALES_ORDER_AHK DEFINITION INHERITING FROM cl_abap_behavior_handle
     METHODS createsalesorderwithitem FOR MODIFY
       IMPORTING keys FOR ACTION zce_sales_order_ahk~createsalesorderwithitem.
 
+    METHODS getdefaultsforpopup FOR READ
+      IMPORTING keys FOR FUNCTION zce_sales_order_ahk~getdefaultsforpopup RESULT result.
+
 ENDCLASS.
 
 
@@ -46,6 +49,22 @@ CLASS lhc_ZCE_SALES_ORDER_AHK IMPLEMENTATION.
   METHOD CreateSalesOrderWithItem.
   ENDMETHOD.
 
+  METHOD GetDefaultsForPopup.
+    " source : https://software-heroes.com/en/blog/abap-rap-popup-default-values
+    LOOP AT keys INTO DATA(key).
+      INSERT VALUE #( %cid = key-%cid ) INTO TABLE result REFERENCE INTO DATA(new_line).
+
+      new_line->%param = VALUE z_i_sales_order_create_act(
+                                   SalesOrderType        = 'OR'
+                                   SalesOrganization     = '1710'
+                                   DistributionChannel   = '10'
+                                   OrganizationDivision  = '00'
+                                   SalesDistrict         = 'US0003'
+                                   SoldToParty           = 'USCU_L04'
+                                   RequestedDeliveryDate = cl_abap_context_info=>get_system_date( )
+                                   RequestedQuantityUnit = 'PC' ).
+    ENDLOOP.
+  ENDMETHOD.
 ENDCLASS.
 
 

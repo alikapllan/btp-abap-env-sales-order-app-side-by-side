@@ -13,5 +13,5 @@ authorization master ( instance )
   field ( readonly ) SalesOrder;
 
   static action ( authorization : global ) CreateSalesOrderWithItem
-    parameter Z_I_SALES_ORDER_CREATE_ACT;
+    parameter Z_I_SALES_ORDER_CREATE_ACT { default function GetDefaultsForPopup; }
 }
