@@ -1,0 +1,14 @@
+unmanaged implementation in class zbp_ce_sales_order_ahk unique;
+strict ( 2 );
+
+define behavior for ZCE_SALES_ORDER_AHK //alias <alias_name>
+//late numbering
+lock master
+authorization master ( instance )
+//etag master <field_name>
+{
+//  create ( authorization : global );
+//  update;
+//  delete;
+  field ( readonly ) SalesOrder;
+}

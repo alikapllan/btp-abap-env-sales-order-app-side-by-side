@@ -1,0 +1,11 @@
+{
+  "formatVersion": "1",
+  "header": {
+    "description": "SAP Object Node Type ZINVENTORYAHK",
+    "originalLanguage": "en",
+    "abapLanguageVersion": "cloudDevelopment"
+  },
+  "name": "ZInventoryAHK",
+  "sapObjectType": "ZInventoryAHK",
+  "rootNode": true
+}

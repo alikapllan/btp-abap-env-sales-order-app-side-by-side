@@ -1,0 +1,38 @@
+@Metadata.layer: #CORE
+
+@UI.headerInfo: { typeName: 'Sales Order Item',
+                  typeNamePlural: 'Sales Order Items',
+                  title: { type: #STANDARD, value: 'SalesOrderItem' },
+                  description: { type: #STANDARD, value: 'Material' } }
+
+annotate entity ZCE_SALES_ORDER_ITEM_AHK with
+
+{
+  @UI.facet: [ { id: 'ItemDetails',
+                 purpose: #STANDARD,
+                 type: #IDENTIFICATION_REFERENCE,
+                 label: 'Item Details',
+                 position: 10 } ]
+  @UI.identification: [ { position: 10, label: 'Sales Order' } ]
+  @UI.lineItem: [ { position: 10, importance: #HIGH, label: 'Sales Order' } ]
+  SalesOrder;
+
+  @UI.identification: [ { position: 20, label: 'Item' } ]
+  @UI.lineItem: [ { position: 20, importance: #HIGH, label: 'Item' } ]
+  SalesOrderItem;
+
+  @UI.identification: [ { position: 30, label: 'Material' } ]
+  @UI.lineItem: [ { position: 30, importance: #HIGH, label: 'Material' } ]
+  Material;
+
+  @UI.identification: [ { position: 40, label: 'Requested Quantity' } ]
+  @UI.lineItem: [ { position: 40, importance: #HIGH, label: 'Requested Quantity' } ]
+  RequestedQuantity;
+
+  @UI.identification: [ { position: 50, label: 'Quantity Unit' } ]
+  @UI.lineItem: [ { position: 50, importance: #MEDIUM, label: 'Quantity Unit' } ]
+  RequestedQuantityUnit;
+
+  @UI.hidden: true
+  _SalesOrder;
+}

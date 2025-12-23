@@ -1,0 +1,7 @@
+@EndUserText.label: 'Service Definition for ZC_INVENTORYAHK'
+@ObjectModel.leadingEntity.name: 'ZC_INVENTORYAHK'
+define service ZUI_INVENTORY_O4AHK
+  provider contracts odata_v4_ui {
+  expose ZC_INVENTORYAHK  as Inventory;
+  expose ZCE_PRODUCTS_AHK as Product;
+}

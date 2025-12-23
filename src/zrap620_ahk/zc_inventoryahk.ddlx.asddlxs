@@ -1,0 +1,47 @@
+@Metadata.layer: #CORE
+
+@UI.headerInfo: { title: { type: #STANDARD, value: 'UUID' },
+                  description: { type: #STANDARD, value: 'UUID' } }
+
+annotate view ZC_INVENTORYAHK with
+
+{
+  @EndUserText.label: 'InventoryId'
+  @UI.facet: [ { label: 'General Information',
+                 id: 'GeneralInfo',
+                 purpose: #STANDARD,
+                 position: 10,
+                 type: #IDENTIFICATION_REFERENCE } ]
+  @UI.identification: [ { position: 20, label: 'InventoryId' } ]
+  @UI.lineItem: [ { position: 20, label: 'InventoryId' } ]
+  @UI.selectionField: [ { position: 20 } ]
+  InventoryID;
+
+  @EndUserText.label: 'ProductId'
+  @UI.identification: [ { position: 30, label: 'ProductId' } ]
+  @UI.lineItem: [ { position: 30, label: 'ProductId' } ]
+  @UI.selectionField: [ { position: 30 } ]
+  ProductID;
+
+  @EndUserText.label: 'Quantity'
+  @UI.identification: [ { position: 40, label: 'Quantity' } ]
+  @UI.lineItem: [ { position: 40, label: 'Quantity' } ]
+  @UI.selectionField: [ { position: 40 } ]
+  Quantity;
+
+  @EndUserText.label: 'Price'
+  @UI.identification: [ { position: 50, label: 'Price' } ]
+  @UI.lineItem: [ { position: 50, label: 'Price' } ]
+  Price;
+
+  @EndUserText.label: 'Description'
+  @UI.identification: [ { position: 60, label: 'Description' } ]
+  @UI.lineItem: [ { position: 60, label: 'Description' } ]
+  Description;
+
+  @EndUserText.label: 'OverallStatus'
+  @UI.identification: [ { position: 70, label: 'OverallStatus' } ]
+  @UI.lineItem: [ { position: 70, label: 'OverallStatus' } ]
+  @UI.selectionField: [ { position: 70 } ]
+  OverallStatus;
+}

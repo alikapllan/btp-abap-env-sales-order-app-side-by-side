@@ -1,0 +1,5 @@
+@EndUserText.label: 'Service Definition ZCE_SALES_ORDER_AHK'
+define service ZUI_AHK_SALESORDER_OV2 {
+  expose ZCE_SALES_ORDER_AHK;
+  expose ZCE_SALES_ORDER_ITEM_AHK;
+}
