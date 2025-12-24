@@ -5,4 +5,6 @@ define custom entity ZCE_VH_MATERIALS_FOR_ITEMS_AHK
 
 {
   key Material                : abap.char(40);
+
+      Plant                   : abap.char(4);
 }
