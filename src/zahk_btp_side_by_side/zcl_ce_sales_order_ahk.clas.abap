@@ -29,7 +29,7 @@ CLASS zcl_ce_sales_order_ahk IMPLEMENTATION.
     DATA lv_entity_id          TYPE string.
     DATA lv_is_item_request    TYPE abap_bool VALUE abap_false.
 
-    DATA lv_sales_order        TYPE zscm_test_api_sales_order_srv=>tys_a_sales_order_type-sales_order.
+    DATA lt_r_sales_order      TYPE RANGE OF zscm_test_api_sales_order_srv=>tys_a_sales_order_type-sales_order.
     DATA lt_filter_conditions  TYPE if_rap_query_filter=>tt_name_range_pairs.
 
     TRY.
@@ -74,14 +74,23 @@ CLASS zcl_ce_sales_order_ahk IMPLEMENTATION.
         "=========================================================
         " 2) Read SalesOrder key from filter (used in BOTH branches)
         "=========================================================
-        CLEAR lv_sales_order.
+        CLEAR lt_r_sales_order.
 
         TRY.
             lt_filter_conditions = io_request->get_filter( )->get_as_ranges( ).
             READ TABLE lt_filter_conditions WITH KEY name = 'SALESORDER' INTO DATA(ls_filter).
             IF sy-subrc = 0 AND ls_filter-range IS NOT INITIAL.
-              lv_sales_order = ls_filter-range[ 1 ]-low.
+*              lv_sales_order = ls_filter-range[ 1 ]-low.
             ENDIF.
+
+            LOOP AT lt_filter_conditions INTO DATA(lr_filter_condition) WHERE name = 'SALESORDER'.
+              LOOP AT lr_filter_condition-range INTO DATA(ls_range_sales_order).
+                APPEND VALUE #( sign   = ls_range_sales_order-sign
+                                option = ls_range_sales_order-option
+                                low    = ls_range_sales_order-low
+                                high   = ls_range_sales_order-high ) TO lt_r_sales_order.
+              ENDLOOP.
+            ENDLOOP.
           CATCH cx_rap_query_filter_no_range.
             " no filter
         ENDTRY.
@@ -114,10 +123,10 @@ CLASS zcl_ce_sales_order_ahk IMPLEMENTATION.
           lo_read_list_request = lo_client_proxy->create_resource_for_entity_set( 'A_SALES_ORDER_ITEM' )->create_request_for_read( ).
 
           " Filter by SalesOrder (navigation /to_Items)
-          IF lv_sales_order IS NOT INITIAL.
+          IF lines( lt_r_sales_order ) > 0.
             DATA(lo_filter_factory_itm) = lo_read_list_request->create_filter_factory( ).
             DATA lt_r_sales_order_itm TYPE RANGE OF zscm_test_api_sales_order_srv=>tys_a_sales_order_type-sales_order.
-            lt_r_sales_order_itm = VALUE #( ( sign = 'I' option = 'EQ' low = lv_sales_order ) ).
+            lt_r_sales_order_itm = lt_r_sales_order.
 
             lo_read_list_request->set_filter( lo_filter_factory_itm->create_by_range(
                                                   iv_property_path = 'SALES_ORDER'
@@ -166,13 +175,15 @@ CLASS zcl_ce_sales_order_ahk IMPLEMENTATION.
           "========================
           " PARENT: Headers
           "========================
+          DATA lt_r_sales_order_hdr TYPE RANGE OF zscm_test_api_sales_order_srv=>tys_a_sales_order_type-sales_order.
+
           lo_read_list_request = lo_client_proxy->create_resource_for_entity_set( 'A_SALES_ORDER' )->create_request_for_read( ).
 
           " If object page read-by-key: apply filter and fetch single row
-          IF lv_sales_order IS NOT INITIAL.
+          IF lines( lt_r_sales_order ) = 1.
             DATA(lo_filter_factory_hdr) = lo_read_list_request->create_filter_factory( ).
-            DATA lt_r_sales_order_hdr TYPE RANGE OF zscm_test_api_sales_order_srv=>tys_a_sales_order_type-sales_order.
-            lt_r_sales_order_hdr = VALUE #( ( sign = 'I' option = 'EQ' low = lv_sales_order ) ).
+
+            lt_r_sales_order_hdr = lt_r_sales_order.
 
             lo_read_list_request->set_filter( lo_filter_factory_hdr->create_by_range(
                                                   iv_property_path = 'SALES_ORDER'
@@ -181,6 +192,18 @@ CLASS zcl_ce_sales_order_ahk IMPLEMENTATION.
             lo_read_list_request->set_top( 1 ).
             lo_read_list_request->set_skip( 0 ).
 
+          " in this case multiple sales orders requested from input field
+          ELSEIF lines( lt_r_sales_order ) > 0.
+
+            lo_filter_factory_hdr = lo_read_list_request->create_filter_factory( ).
+            lt_r_sales_order_hdr = lt_r_sales_order.
+
+            lo_read_list_request->set_filter( lo_filter_factory_hdr->create_by_range(
+                                                  iv_property_path = 'SALES_ORDER'
+                                                  it_range         = lt_r_sales_order_hdr ) ).
+
+            lo_read_list_request->set_top( lines( lt_r_sales_order ) ).
+            lo_read_list_request->set_skip( 0 ).
           ELSE.
             " List
             lo_read_list_request->set_orderby( VALUE #( ( property_path = 'SALES_ORDER' descending = abap_true ) ) ).
