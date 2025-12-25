@@ -73,7 +73,6 @@ CLASS lhc_ZCE_SALES_ORDER_AHK IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD CreateSalesOrderWithItem.
-    " Static action: FE typically sends one row in KEYS with %param filled.
     DATA lv_created_sales_order TYPE zscm_test_api_sales_order_srv=>tys_a_sales_order_type-sales_order.
     DATA lv_error               TYPE string.
 
@@ -120,7 +119,6 @@ CLASS lhc_ZCE_SALES_ORDER_AHK IMPLEMENTATION.
       INSERT VALUE #( %cid = keys[ 1 ]-%cid
                       %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
                                                     text     = lv_error ) ) INTO TABLE reported-zce_sales_order_ahk.
-      " Mark the call as failed
       INSERT VALUE #( %cid = keys[ 1 ]-%cid ) INTO TABLE failed-zce_sales_order_ahk.
     ENDIF.
   ENDMETHOD.
@@ -128,15 +126,19 @@ CLASS lhc_ZCE_SALES_ORDER_AHK IMPLEMENTATION.
   METHOD get_remote_proxy.
     DATA lo_http_client TYPE REF TO if_web_http_client.
 
-    DATA(lo_destination) =
-      cl_http_destination_provider=>create_by_comm_arrangement( comm_scenario  = 'ZBTP_TRIAL_SAP_COM_0109'
-                                                                comm_system_id = 'ZBTP_TRIAL_SAP_COM_0109'
-                                                                service_id     = 'ZBTP_TRIAL_SAP_COM_0109_REST' ).
+    " Existing communication arrangement for SAP Sales Order API on SAP BTP Trial created by SAP itself
+    " https://community.sap.com/t5/technology-blog-posts-by-sap/how-to-build-side-by-side-extensions-for-sap-s-4hana-public-cloud-with-sap/ba-p/14235644
+    DATA(lo_destination) = cl_http_destination_provider=>create_by_comm_arrangement(
+                               comm_scenario  = 'ZBTP_TRIAL_SAP_COM_0109'
+                               comm_system_id = 'ZBTP_TRIAL_SAP_COM_0109'
+                               service_id     = 'ZBTP_TRIAL_SAP_COM_0109_REST' ).
 
     lo_http_client = cl_web_http_client_manager=>create_by_http_destination( lo_destination ).
 
     ro_proxy = /iwbep/cl_cp_factory_remote=>create_v2_remote_proxy(
                    is_proxy_model_key       = VALUE #( repository_id       = 'DEFAULT'
+                                                       " service consumption model name uploaded via metadata file of the Service
+                                                       " https://api.sap.com/api/OP_API_SALES_ORDER_SRV_0001/overview -> API Specification -> OData EDMX
                                                        proxy_model_id      = 'ZSCM_TEST_API_SALES_ORDER_SRV'
                                                        proxy_model_version = '0001' )
                    io_http_client           = lo_http_client
