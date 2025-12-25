@@ -81,6 +81,13 @@ CLASS lhc_ZCE_SALES_ORDER_AHK IMPLEMENTATION.
         DATA(lo_proxy) = get_remote_proxy( ).
 
         LOOP AT keys ASSIGNING FIELD-SYMBOL(<k>).
+          IF NOT <k>-%param-RequestedQuantity > 0.
+            INSERT VALUE #( %cid = keys[ 1 ]-%cid
+                            %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
+                                                          text     = 'Please enter a proper quantity' ) ) INTO TABLE reported-zce_sales_order_ahk.
+            INSERT VALUE #( %cid = keys[ 1 ]-%cid ) INTO TABLE failed-zce_sales_order_ahk.
+            RETURN.
+          ENDIF.
           "-------------------------------------------------------
           " Read popup parameters
           "-------------------------------------------------------
