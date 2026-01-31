@@ -1,0 +1,11 @@
+{
+  "formatVersion": "1",
+  "header": {
+    "description": "SAP Object Node Type ZAHK_RAP100_ATRV",
+    "originalLanguage": "en",
+    "abapLanguageVersion": "cloudDevelopment"
+  },
+  "name": "ZAHK_RAP100_ATRV",
+  "sapObjectType": "ZAHK_RAP100_ATRV",
+  "rootNode": true
+}
